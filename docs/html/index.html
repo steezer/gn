@@ -1,0 +1,265 @@
+<html>
+  <head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>i5ting_ztree_toc:index</title>
+		<link href="toc/style/github-bf51422f4bb36427d391e4b75a1daa083c2d840e.css" media="all" rel="stylesheet" type="text/css"/>
+		<link href="toc/style/github2-d731afd4f624c99a4b19ad69f3083cd6d02b81d5.css" media="all" rel="stylesheet" type="text/css"/>
+		<link href="toc/css/zTreeStyle/zTreeStyle.css" media="all" rel="stylesheet" type="text/css"/>
+	  <style>
+		pre {
+		    counter-reset: line-numbering;
+		    border: solid 1px #d9d9d9;
+		    border-radius: 0;
+		    background: #fff;
+		    padding: 0;
+		    line-height: 23px;
+		    margin-bottom: 30px;
+		    white-space: pre;
+		    overflow-x: auto;
+		    word-break: inherit;
+		    word-wrap: inherit;
+		}
+
+		pre a::before {
+		  content: counter(line-numbering);
+		  counter-increment: line-numbering;
+		  padding-right: 1em; /* space after numbers */
+		  width: 25px;
+		  text-align: right;
+		  opacity: 0.7;
+		  display: inline-block;
+		  color: #aaa;
+		  background: #eee;
+		  margin-right: 16px;
+		  padding: 2px 10px;
+		  font-size: 13px;
+		  -webkit-touch-callout: none;
+		  -webkit-user-select: none;
+		  -khtml-user-select: none;
+		  -moz-user-select: none;
+		  -ms-user-select: none;
+		  user-select: none;
+		}
+
+		pre a:first-of-type::before {
+		  padding-top: 10px;
+		}
+
+		pre a:last-of-type::before {
+		  padding-bottom: 10px;
+		}
+
+		pre a:only-of-type::before {
+		  padding: 10px;
+		}
+
+		.highlight { background-color: #ffffcc } /* RIGHT */
+		</style>
+  </head>
+  <body>
+	  <div>
+				<div style='width:25%;'>
+						<ul id="tree" class="ztree" style='width:100%'>
+
+						</ul>
+				</div>
+        <div id='readme' style='width:70%;margin-left:20%;'>
+          	<article class='markdown-body'>
+            	<h1 id="gn">GN</h1>
+<p>GN is a meta-build system that generates build files for
+<a href="https://ninja-build.org">Ninja</a>.</p>
+<p>Related resources:</p>
+<ul>
+<li><a href="quick_start.html">GN Quick Start guide</a></li>
+<li><a href="reference.html">Reference</a></li>
+<li><a href="language.html">Language</a></li>
+<li><a href="style_guide.html">Style guide</a></li>
+<li><a href="standalone.html">Standalone</a></li>
+<li><a href="cross_compiles.html">Cross compiles</a></li>
+<li><a href="faq.html">Faq</a></li>
+<li>An introductory <a href="https://docs.google.com/presentation/d/15Zwb53JcncHfEwHpnG_PoIbbzQ3GQi_cpujYwbpcbZo/edit?usp=sharing">presentation</a>.</li>
+<li>The <a href="https://groups.google.com/a/chromium.org/forum/#!forum/gn-dev">mailing list</a>.</li>
+</ul>
+<h2 id="what-gn-is-for">What GN is for</h2>
+<p>GN is currently used as the build system for Chromium, Fuchsia, and related
+projects. Some strengths of GN are:</p>
+<ul>
+<li><p>It is designed for large projects and large teams. It scales efficiently to
+many thousands of build files and tens of thousands of source files.</p>
+</li>
+<li><p>It has a readable, clean syntax. Once a build is set-up, it is generally
+easy for people with no backround in GN to make basic edits to the build.</p>
+</li>
+<li><p>It is designed for multi-platform projects. It can cleanly express many
+complicated build variants across different platforms. A single build
+invocation can target multiple platforms.</p>
+</li>
+<li><p>It supports multiple parallel output directories, each with their own
+configuration. This allows a developer to maintain builds targeting debug,
+release, or different platforms in parallel without forced rebuilds when
+switching.</p>
+</li>
+<li><p>It has a focus on correctness. GN checks for the correct dependencies,
+inputs, and outputs to the extent possible, and has a number of tools to
+allow developers to ensure the build evolves as desired (for example, <code>gn
+check</code>, <code>testonly</code>, <code>assert_no_deps</code>).</p>
+</li>
+<li><p>It has comprehensive build-in help available from the command-line.</p>
+</li>
+</ul>
+<p>Although small projects successfully use GN, the focus on large projects has
+some disadvanages:</p>
+<ul>
+<li><p>GN has the goal of being minimally expressive. Although it can be quite
+flexible, a design goal is to direct members of a large team (who may not
+have much knowledge about the build) down an easy-to-understand, well-lit
+path. This isn&#39;t necessarily the correct trade-off for smaller projects.</p>
+</li>
+<li><p>The minimal build configuration is relatively heavyweight. There are several
+files required and the exact way all compilers are linkers are run must be
+specified in the configuration (see &quot;Examples&quot; below). There is no default
+compiler configuration.</p>
+</li>
+<li><p>It is not easily composable. GN is designed to compile a single large
+project with relatively uniform settings and rules. Projects like Chromium
+do bring together multiple repositories from multiple teams, but the
+projects must agree on some conventions in the build files to allow this to
+work.</p>
+</li>
+<li><p>GN is designed with the expectation that the developers build a project want
+to compile an identical configuration. So while builds can integrate
+with the user&#39;s environment like the CXX and CFLAGS variables if they want,
+this is not the default and most project&#39;s builds do not do this. The result
+is that many GN projects do not integrate well with other systems like
+ebuild.</p>
+</li>
+<li><p>There is no simple release scheme (see &quot;Versioning and distribution&quot; below).
+Projects are expected to manage the version of GN they require. Getting an
+appropriate GN binary can be a hurdle for new contributors to a project.
+Since it is relatively uncommon, it can be more difficult to find
+information and examples.</p>
+</li>
+</ul>
+<p>GN can generate Ninja build files for C, C++, Rust, Objective C, and Swift
+source on most popular platforms. Other languages can be compiled using the
+general &quot;action&quot; rules (Google does this for Java and Go). But because this is
+not as clean, generally GN is only used when the bulk of the build is in one of
+the main built-in languages.</p>
+<h2 id="getting-a-binary">Getting a binary</h2>
+<p>You can download the latest version of GN binary for
+<a href="https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/latest">Linux</a>,
+<a href="https://chrome-infra-packages.appspot.com/dl/gn/gn/mac-amd64/+/latest">macOS</a> and
+<a href="https://chrome-infra-packages.appspot.com/dl/gn/gn/windows-amd64/+/latest">Windows</a>
+from Google&#39;s build infrastructure (see &quot;Versioning and distribution&quot; below for
+how this is expected to work).</p>
+<p>Alternatively, you can build GN from source with a C++17 compiler:</p>
+<pre><code>git clone https://gn.googlesource.com/gn
+cd gn
+python build/gen.py
+ninja -C out
+# To run tests:
+out/gn_unittests
+</code></pre><p>On Windows, it is expected that <code>cl.exe</code>, <code>link.exe</code>, and <code>lib.exe</code> can be found
+in <code>PATH</code>, so you&#39;ll want to run from a Visual Studio command prompt, or
+similar.</p>
+<p>On Linux and Mac, the default compiler is <code>clang++</code>, a recent version is
+expected to be found in <code>PATH</code>. This can be overridden by setting <code>CC</code>, <code>CXX</code>,
+and <code>AR</code>.</p>
+<h2 id="examples">Examples</h2>
+<p>There is a simple example in <a href="examples/simple_build">examples/simple_build</a>
+directory that is a good place to get started with the minimal configuration.</p>
+<p>To build and run the simple example with the default gcc compiler:</p>
+<pre><code>cd examples/simple_build
+../../out/gn gen -C out
+ninja -C out
+./out/hello
+</code></pre><p>For a maximal configuration see the Chromium setup:</p>
+<ul>
+<li><a href="https://cs.chromium.org/chromium/src/.gn">.gn</a></li>
+<li><a href="https://cs.chromium.org/chromium/src/build/config/BUILDCONFIG.gn">BUILDCONFIG.gn</a></li>
+<li><a href="https://cs.chromium.org/chromium/src/build/toolchain/">Toolchain setup</a></li>
+<li><a href="https://cs.chromium.org/chromium/src/build/config/compiler/BUILD.gn">Compiler setup</a></li>
+</ul>
+<p>and the Fuchsia setup:</p>
+<ul>
+<li><a href="https://fuchsia.googlesource.com/fuchsia/+/refs/heads/master/.gn">.gn</a></li>
+<li><a href="https://fuchsia.googlesource.com/fuchsia/+/refs/heads/master/build/config/BUILDCONFIG.gn">BUILDCONFIG.gn</a></li>
+<li><a href="https://fuchsia.googlesource.com/fuchsia/+/refs/heads/master/build/toolchain/">Toolchain setup</a></li>
+<li><a href="https://fuchsia.googlesource.com/fuchsia/+/refs/heads/master/build/config/BUILD.gn">Compiler setup</a></li>
+</ul>
+<h2 id="reporting-bugs">Reporting bugs</h2>
+<p>If you find a bug, you can see if it is known or report it in the <a href="https://bugs.chromium.org/p/gn/issues/list">bug
+database</a>.</p>
+<h2 id="sending-patches">Sending patches</h2>
+<p>GN uses <a href="https://www.gerritcodereview.com/">Gerrit</a> for code review. The short
+version of how to patch is:</p>
+<pre><code>Register at https://gn-review.googlesource.com.
+
+... edit code ...
+ninja -C out &amp;&amp; out/gn_unittests
+</code></pre><p>Then, to upload a change for review:</p>
+<pre><code>git commit
+git push origin HEAD:refs/for/master
+</code></pre><p>The first time you do this you&#39;ll get an error from the server about a missing
+change-ID. Follow the directions in the error message to install the change-ID
+hook and run <code>git commit --amend</code> to apply the hook to the current commit.</p>
+<p>When revising a change, use:</p>
+<pre><code>git commit --amend
+git push origin HEAD:refs/for/master
+</code></pre><p>which will add the new changes to the existing code review, rather than creating
+a new one.</p>
+<p>We ask that all contributors
+<a href="https://cla.developers.google.com/">sign Google&#39;s Contributor License Agreement</a>
+(either individual or corporate as appropriate, select &#39;any other Google
+project&#39;).</p>
+<h2 id="community">Community</h2>
+<p>You may ask questions and follow along with GN&#39;s development on Chromium&#39;s
+<a href="https://groups.google.com/a/chromium.org/forum/#!forum/gn-dev">gn-dev@</a>
+Google Group.</p>
+<h2 id="versioning-and-distribution">Versioning and distribution</h2>
+<p>Most projects are designed to use the developer&#39;s computer&#39;s current toolchain
+such as compiler, linker, and build tool. But the large projects that GN is
+designed for typically want a more hermetic environment. They will ensure that
+developers are using a specific compatible toolchain that is versioned with the
+code</p>
+<p>As a result, GN expects that the project choose the appropriate version of GN
+that will work with each version of the project. There is no &quot;current stable
+version&quot; of GN that is expected to work for all projects.</p>
+<p>As a result, the GN developers to not maintain any packages in any of the
+various packaging systems (Debian, RedHat, HomeBrew, etc.). Some of these
+systems to have GN packages, but they are maintained by third parties and you
+should use at your own risk. Instead, we recommend you refer your checkout
+tooling to download binaries for a specific hash from <a href="https://chrome-infra-packages.appspot.com/p/gn/gn">Google&#39;s build
+infrastructure</a> or compile
+your own.</p>
+<p>GN does not guarantee the backwards-compatibility of new versions and has no
+branches or versioning scheme beyond the sequence of commits to the master git
+branch (which is expected to be stable).</p>
+<p>In practice, however, GN is very backwards-compatible. The core functionality
+has been stable for many years and there is enough GN code at Google alone to
+make non-backwards-compatible changes very difficult, even if they were
+desirable.</p>
+<p>There have been discussions about adding a versioning scheme with some
+guarantees about backwards-compatibility, but nothing has yet been implemented.</p>
+
+          	</article>
+        </div>
+		</div>
+  </body>
+</html>
+<script type="text/javascript" src="toc/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="toc/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="toc/js/ztree_toc.js"></script>
+<script type="text/javascript" src="toc_conf.js"></script>
+
+<SCRIPT type="text/javascript" >
+<!--
+$(document).ready(function(){
+    var css_conf = eval(markdown_panel_style);
+    $('#readme').css(css_conf)
+    
+    var conf = eval(jquery_ztree_toc_opts);
+		$('#tree').ztree_toc(conf);
+});
+//-->
+</SCRIPT>

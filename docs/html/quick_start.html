@@ -1,0 +1,304 @@
+<html>
+  <head>
+	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>i5ting_ztree_toc:quick_start</title>
+		<link href="toc/style/github-bf51422f4bb36427d391e4b75a1daa083c2d840e.css" media="all" rel="stylesheet" type="text/css"/>
+		<link href="toc/style/github2-d731afd4f624c99a4b19ad69f3083cd6d02b81d5.css" media="all" rel="stylesheet" type="text/css"/>
+		<link href="toc/css/zTreeStyle/zTreeStyle.css" media="all" rel="stylesheet" type="text/css"/>
+	  <style>
+		pre {
+		    counter-reset: line-numbering;
+		    border: solid 1px #d9d9d9;
+		    border-radius: 0;
+		    background: #fff;
+		    padding: 0;
+		    line-height: 23px;
+		    margin-bottom: 30px;
+		    white-space: pre;
+		    overflow-x: auto;
+		    word-break: inherit;
+		    word-wrap: inherit;
+		}
+
+		pre a::before {
+		  content: counter(line-numbering);
+		  counter-increment: line-numbering;
+		  padding-right: 1em; /* space after numbers */
+		  width: 25px;
+		  text-align: right;
+		  opacity: 0.7;
+		  display: inline-block;
+		  color: #aaa;
+		  background: #eee;
+		  margin-right: 16px;
+		  padding: 2px 10px;
+		  font-size: 13px;
+		  -webkit-touch-callout: none;
+		  -webkit-user-select: none;
+		  -khtml-user-select: none;
+		  -moz-user-select: none;
+		  -ms-user-select: none;
+		  user-select: none;
+		}
+
+		pre a:first-of-type::before {
+		  padding-top: 10px;
+		}
+
+		pre a:last-of-type::before {
+		  padding-bottom: 10px;
+		}
+
+		pre a:only-of-type::before {
+		  padding: 10px;
+		}
+
+		.highlight { background-color: #ffffcc } /* RIGHT */
+		</style>
+  </head>
+  <body>
+	  <div>
+				<div style='width:25%;'>
+						<ul id="tree" class="ztree" style='width:100%'>
+
+						</ul>
+				</div>
+        <div id='readme' style='width:70%;margin-left:20%;'>
+          	<article class='markdown-body'>
+            	<h1 id="gn-quick-start-guide">GN Quick Start guide</h1>
+<p>[TOC]</p>
+<h2 id="running-gn">Running GN</h2>
+<p>You just run <code>gn</code> from the command line. For large projects, GN is versioned
+and distributed with the source checkout.</p>
+<ul>
+<li><p>For Chromium and Chromium-based projects, there is a script in
+<code>depot_tools</code>, which is presumably in your PATH, with this name. The script
+will find the binary in the source tree containing the current directory and
+run it.</p>
+</li>
+<li><p>For Fuchsia in-tree development, run <code>fx gn ...</code> which will find the right
+GN binary and run it with the given arguments.</p>
+</li>
+<li><p>For other projects, see your project&#39;s documentation.</p>
+</li>
+</ul>
+<h2 id="setting-up-a-build">Setting up a build</h2>
+<p>Unlike some other build systems, with GN you set up your own build directories
+with the settings you want. This lets you maintain as many different builds in
+parallel as you need.</p>
+<p>Once you set up a build directory, the Ninja files will be automatically
+regenerated if they&#39;re out of date when you build in that directory so you
+should not have to re-run GN.</p>
+<p>To make a build directory:</p>
+<pre><code>gn gen out/my_build
+</code></pre><h2 id="passing-build-arguments">Passing build arguments</h2>
+<p>Set build arguments on your build directory by running:</p>
+<pre><code>gn args out/my_build
+</code></pre><p>This will bring up an editor. Type build args into that file like this:</p>
+<pre><code>is_component_build = true
+is_debug = false
+</code></pre><p>The available variables will depend on your build (this example is from
+Chromium). You can see the list of available arguments and their default values
+by typing</p>
+<pre><code>gn args --list out/my_build
+</code></pre><p>on the command line. Note that you have to specify the build directory
+for this command because the available arguments can change according
+to the build.</p>
+<p>Chrome developers can also read the <a href="http://www.chromium.org/developers/gn-build-configuration">Chrome-specific build
+configuration</a>
+instructions for more information.</p>
+<h2 id="cross-compiling-to-a-target-os-or-architecture">Cross-compiling to a target OS or architecture</h2>
+<p>Run <code>gn args out/Default</code> (substituting your build directory as needed) and
+add one or more of the following lines for common cross-compiling options.</p>
+<pre><code>target_os = &quot;chromeos&quot;
+target_os = &quot;android&quot;
+
+target_cpu = &quot;arm&quot;
+target_cpu = &quot;x86&quot;
+target_cpu = &quot;x64&quot;
+</code></pre><p>See <a href="cross_compiles.md">GN cross compiles</a> for more info.</p>
+<h2 id="step-by-step">Step-by-step</h2>
+<h3 id="adding-a-build-file">Adding a build file</h3>
+<p>Go to the directory <code>examples/simple_build</code>. This is the root of a minimal GN
+repository.</p>
+<p>In that directory there is a <code>tutorial</code> directory. There is already a
+<code>tutorial.cc</code> file that&#39;s not hooked up to the build. Create a new <code>BUILD.gn</code>
+file in that directory for our new target.</p>
+<pre><code>executable(&quot;tutorial&quot;) {
+  sources = [
+    &quot;tutorial.cc&quot;,
+  ]
+}
+</code></pre><p>Now we just need to tell the build about this new target. Open the <code>BUILD.gn</code>
+file in the parent (<code>simple_build</code>) directory. GN starts by loading this root
+file, and then loads all dependencies ourward from here, so we just need to add
+a reference to our new target from this file.</p>
+<p>You could add our new target as a dependency from one of the existing targets in
+the <code>simple_build/BUILD.gn</code> file, but it usually doesn&#39;t make a lot of sense to
+have an executable as a depdency of another executable (they can&#39;t be linked).
+So let&#39;s make a &quot;tools&quot; group. In GN, a &quot;group&quot; is just a collection of
+dependencies that&#39;s not complied or linked:</p>
+<pre><code>group(&quot;tools&quot;) {
+  deps = [
+    # This will expand to the name &quot;//tutorial:tutorial&quot; which is the full name
+    # of our new target. Run &quot;gn help labels&quot; for more.
+    &quot;//tutorial&quot;,
+  ]
+}
+</code></pre><h3 id="testing-your-addition">Testing your addition</h3>
+<p>From the command line in the <code>simple_build</code> directory:</p>
+<pre><code>gn gen out
+ninja -C out tutorial
+out/tutorial
+</code></pre><p>You should see &quot;Hello, world.&quot; output to the console.</p>
+<p>Side note: GN encourages target names for static libraries that aren&#39;t globally
+unique. To build one of these, you can pass the label with its path (but no leading
+&quot;//&quot;) to ninja:</p>
+<pre><code>ninja -C out some/path/to/target:my_target
+</code></pre><h3 id="declaring-dependencies">Declaring dependencies</h3>
+<p>Let&#39;s look at the targets defined in
+<a href="../examples/simple_build/BUILD.gn">examples/simple_build/BUILD.gn</a>. There is a
+static library that defines one function, <code>GetStaticText()</code>:</p>
+<pre><code>static_library(&quot;hello_static&quot;) {
+  sources = [
+    &quot;hello_static.cc&quot;,
+    &quot;hello_static.h&quot;,
+  ]
+}
+</code></pre><p>There is also a shared library that defines one function <code>GetSharedText()</code>:</p>
+<pre><code>shared_library(&quot;hello_shared&quot;) {
+  sources = [
+    &quot;hello_shared.cc&quot;,
+    &quot;hello_shared.h&quot;,
+  ]
+
+  defines = [ &quot;HELLO_SHARED_IMPLEMENTATION&quot; ]
+}
+</code></pre><p>This also illustrates how to set preprocessor defines for a target. To set more
+than one or to assign values, use this form:</p>
+<pre><code>defines = [
+  &quot;HELLO_SHARED_IMPLEMENTATION&quot;,
+  &quot;ENABLE_DOOM_MELON=0&quot;,
+]
+</code></pre><p>Now let&#39;s look at the executable that depends on these two libraries:</p>
+<pre><code>executable(&quot;hello&quot;) {
+  sources = [
+    &quot;hello.cc&quot;,
+  ]
+
+  deps = [
+    &quot;:hello_shared&quot;,
+    &quot;:hello_static&quot;,
+  ]
+}
+</code></pre><p>This executable includes one source file and depends on the previous
+two libraries. Labels starting with a colon refer to a target with that name in
+the current BUILD.gn file.</p>
+<h3 id="test-the-binary">Test the binary</h3>
+<p>From the command line in the <code>simple_build</code> directory:</p>
+<pre><code>ninja -C out hello
+out/hello
+</code></pre><p>Note that you <strong>didn&#39;t</strong> need to re-run GN. GN will automatically rebuild
+the ninja files when any build file has changed. You know this happens
+when ninja prints <code>[1/1] Regenerating ninja files</code> at the beginning of
+execution.</p>
+<h3 id="putting-settings-in-a-config">Putting settings in a config</h3>
+<p>Users of a library often need compiler flags, defines, and include directories
+applied to them. To do this, put all such settings into a &quot;config&quot; which is a
+named collection of settings (but not sources or dependencies):</p>
+<pre><code>config(&quot;my_lib_config&quot;) {
+  defines = [ &quot;ENABLE_DOOM_MELON&quot; ]
+  include_dirs = [ &quot;//third_party/something&quot; ]
+}
+</code></pre><p>To apply a config&#39;s settings to a target, add it to the <code>configs</code> list:</p>
+<pre><code>static_library(&quot;hello_shared&quot;) {
+  ...
+  # Note &quot;+=&quot; here is usually required, see &quot;default configs&quot; below.
+  configs += [
+    &quot;:my_lib_config&quot;,
+  ]
+}
+</code></pre><p>A config can be applied to all targets that depend on the current one by putting
+its label in the <code>public_configs</code> list:</p>
+<pre><code>static_library(&quot;hello_shared&quot;) {
+  ...
+  public_configs = [
+    &quot;:my_lib_config&quot;,
+  ]
+}
+</code></pre><p>The <code>public_configs</code> also applies to the current target, so there&#39;s no need to
+list a config in both places.</p>
+<h3 id="default-configs">Default configs</h3>
+<p>The build configuration will set up some settings that apply to every target by
+default. These will normally be set as a default list of configs. You can see
+this using the &quot;print&quot; command which is useful for debugging:</p>
+<pre><code>executable(&quot;hello&quot;) {
+  print(configs)
+}
+</code></pre><p>Running GN will print something like:</p>
+<pre><code>$ gn gen out
+[&quot;//build:compiler_defaults&quot;, &quot;//build:executable_ldconfig&quot;]
+Done. Made 5 targets from 5 files in 9ms
+</code></pre><p>Targets can modify this list to change their defaults. For example, the build
+setup might turn off exceptions by default by adding a <code>no_exceptions</code> config,
+but a target might re-enable them by replacing it with a different one:</p>
+<pre><code>executable(&quot;hello&quot;) {
+  ...
+  configs -= [ &quot;//build:no_exceptions&quot; ]  # Remove global default.
+  configs += [ &quot;//build:exceptions&quot; ]  # Replace with a different one.
+}
+</code></pre><p>Our print command from above could also be expressed using string interpolation.
+This is a way to convert values to strings. It uses the symbol &quot;$&quot; to refer to a
+variable:</p>
+<pre><code>print(&quot;The configs for the target $target_name are $configs&quot;)
+</code></pre><h2 id="add-a-new-build-argument">Add a new build argument</h2>
+<p>You declare which arguments you accept and specify default values via
+<code>declare_args</code>.</p>
+<pre><code>declare_args() {
+  enable_teleporter = true
+  enable_doom_melon = false
+}
+</code></pre><p>See <code>gn help buildargs</code> for an overview of how this works.
+See <code>gn help declare_args</code> for specifics on declaring them.</p>
+<p>It is an error to declare a given argument more than once in a given scope, so
+care should be used in scoping and naming arguments.</p>
+<h2 id="don-t-know-what-s-going-on-">Don&#39;t know what&#39;s going on?</h2>
+<p>You can run GN in verbose mode to see lots of messages about what it&#39;s
+doing. Use <code>-v</code> for this.</p>
+<h3 id="the-desc-command">The &quot;desc&quot; command</h3>
+<p>You can run <code>gn desc &lt;build_dir&gt; &lt;targetname&gt;</code> to get information about
+a given target:</p>
+<pre><code>gn desc out/Default //foo/bar:say_hello
+</code></pre><p>will print out lots of exciting information. You can also print just one
+section. Lets say you wanted to know where your <code>TWO_PEOPLE</code> define
+came from on the <code>say_hello</code> target:</p>
+<pre><code>&gt; gn desc out/Default //foo/bar:say_hello defines --blame
+...lots of other stuff omitted...
+  From //foo/bar:hello_config
+       (Added by //foo/bar/BUILD.gn:12)
+    TWO_PEOPLE
+</code></pre><p>Another particularly interesting variation:</p>
+<pre><code>gn desc out/Default //base:base_i18n deps --tree
+</code></pre><p>See <code>gn help desc</code> for more.</p>
+
+          	</article>
+        </div>
+		</div>
+  </body>
+</html>
+<script type="text/javascript" src="toc/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="toc/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="toc/js/ztree_toc.js"></script>
+<script type="text/javascript" src="toc_conf.js"></script>
+
+<SCRIPT type="text/javascript" >
+<!--
+$(document).ready(function(){
+    var css_conf = eval(markdown_panel_style);
+    $('#readme').css(css_conf)
+    
+    var conf = eval(jquery_ztree_toc_opts);
+		$('#tree').ztree_toc(conf);
+});
+//-->
+</SCRIPT>
